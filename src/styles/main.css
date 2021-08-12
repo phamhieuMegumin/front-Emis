@@ -1,0 +1,149 @@
+.container {
+  margin-top: 20px;
+}
+.row {
+  margin-top: 12px;
+  text-align: center;
+}
+/* Bắt đầu css input */
+.row-input {
+  margin-top: 12px;
+}
+/* .row-input + .row-input {
+  margin-top: 34px;
+} */
+.el-form-item {
+  margin-bottom: 0 !important;
+}
+.el-form-item.is-error {
+  margin-bottom: 22px !important;
+}
+.el-input__inner {
+  border-radius: 10px !important;
+}
+.el-input__inner:focus {
+  outline: none;
+  border-color: #8a6bf6 !important;
+}
+/* Css button */
+.el-button {
+  min-width: 113px;
+  padding: 0 12px !important;
+  margin-left: 0 !important;
+  font-size: 14px;
+  line-height: 20px;
+  border: none;
+  height: 40px;
+  border-radius: 10px !important;
+}
+.btn-group-left {
+  margin-left: 12px !important;
+}
+.btn-100 {
+  width: 100%;
+}
+.btn--gradient {
+  background: linear-gradient(45deg, #583fed, #953fed) !important;
+  color: #fff !important;
+}
+.btn--white {
+  color: #606266 !important;
+}
+
+.btn--gradient:hover,
+.btn--white:hover {
+  opacity: 0.8;
+}
+.btn--gradient span {
+  line-height: 17px;
+}
+/* Kết thúc css input */
+/* Css login vs Register */
+.login-container,
+.register-container {
+  width: 100%;
+  height: 100vh;
+  background-color: #f1f2f7;
+}
+
+.form-group {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  background: #fff;
+  border-radius: 25px;
+  padding: 28px 52px;
+  min-height: 500px;
+}
+/* Tab container  */
+.input-prefix-icon {
+  margin-left: 4px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.tab-container {
+  margin-top: 24px;
+}
+/* End of tab container */
+/* Bắt đầu form footer */
+.row a {
+  text-decoration: none;
+}
+.form-footer .row {
+  margin-top: 4px;
+}
+.container .text-accent {
+  color: #8a6bf6;
+}
+/* Kết thúc form footer */
+/* Custom popover */
+.el-popover.el-popper {
+  border-radius: 10px !important;
+}
+/* Kết thúc custom popover */
+/* Dialog css */
+.el-dialog:not(.is-fullscreen) {
+  border-radius: 10px;
+}
+.el-dialog__title {
+  font-weight: 700;
+  font-size: 20px !important;
+  line-height: 28px !important;
+  color: rgb(98, 118, 142) !important;
+}
+.el-dialog__header {
+  padding: 24px !important;
+}
+.el-dialog .el-dialog__body {
+  padding: 0 24px 24px !important;
+  word-break: break-word;
+}
+/* Select */
+.el-select {
+  width: 100%;
+}
+.el-popper__arrow {
+  display: none;
+}
+.el-select__popper {
+  top: 238px !important;
+}
+/* MessageBox */
+.el-message-box {
+  padding-bottom: 0 !important;
+}
+.el-message-box__header {
+  background: #eaebf5 !important;
+}
+.el-message-box .el-message-box__content {
+  padding: 24px 24px 0;
+}
+.el-message-box .el-message-box__btns {
+  padding: 24px;
+  display: flex;
+  justify-content: flex-end;
+}
