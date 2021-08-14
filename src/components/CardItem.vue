@@ -9,8 +9,8 @@
       <!-- Bắt đầu phần thông tin card -->
       <div class="description">
         <div class="info-class">
-          <div class="class-name">Lớp ôn luyện hè 6</div>
-          <div class="more-info">0 Học sinh</div>
+          <div class="class-name">{{ classInfo.classroomName }}</div>
+          <div class="more-info">{{ 0 }} Học sinh</div>
         </div>
         <div class="line"></div>
         <div class="bottom">
@@ -59,6 +59,7 @@
 
 <script>
 export default {
+  props: ["classInfo"],
   setup(props, context) {
     /**
      * Bắt sự kiện thay đổi thông tin lớp học

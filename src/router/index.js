@@ -2,8 +2,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/pages/Home.vue";
 import Login from "../views/pages/Login.vue";
 import Register from "../views/pages/Register.vue";
-import store from "../stores/stores";
-import AuthContext from "../uses/Auth";
+// import store from "../stores/stores";
+// import AuthContext from "../uses/Auth";
 import Teacher from "../views/teacher/Teacher.vue";
 import Classroom from "../views/teacher/Classroom.vue";
 const routes = [
@@ -41,16 +41,21 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
 });
-const { checkAuthenticaiton } = AuthContext();
+// const { checkAuthenticaiton } = AuthContext();
 router.beforeEach(async (to, from, next) => {
   // await checkAuthenticaiton();
-  if (to.meta.isAuthetication && !store.state.isAuthetication) {
+  if (
+    to.meta.isAuthetication &&
+    !localStorage.getItem("JWT") &&
+    to.name != "login" &&
+    to.name != "register"
+  ) {
     next("/login");
   } else {
     next();
   }
 });
-router.afterEach(async () => {
-  await checkAuthenticaiton();
-});
+// router.afterEach(async () => {
+//   await checkAuthenticaiton();
+// });
 export default router;

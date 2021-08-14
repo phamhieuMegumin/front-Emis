@@ -8,14 +8,14 @@
 </template>
 
 <script>
-import AuthContext from "./uses/Auth";
+// import AuthContext from "./uses/Auth";
 import "./styles/main.css";
 export default {
   name: "App",
-  beforeCreate() {
-    const { checkAuthenticaiton } = AuthContext();
-    checkAuthenticaiton();
-  },
+  // beforeCreate() {
+  //   const { checkAuthenticaiton } = AuthContext();
+  //   checkAuthenticaiton();
+  // },
 };
 </script>
 

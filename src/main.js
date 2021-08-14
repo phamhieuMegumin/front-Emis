@@ -3,6 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./stores/stores";
 import installElementPlus from "./plugins/element";
+import "./axios";
 
 const app = createApp(App);
 installElementPlus(app);

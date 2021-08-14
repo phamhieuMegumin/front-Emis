@@ -12,6 +12,8 @@ const store = createStore({
       role: null,
     },
     testTitle: [""],
+    classroomList: [],
+    gradeList: [],
   },
   mutations: {
     CHANGE_AUTHENTICATION(state, data) {
@@ -23,6 +25,12 @@ const store = createStore({
     },
     TEST_CHANGE(state) {
       state.testTitle.push("3");
+    },
+    CHANGE_CLASSROOM_LIST(state, data) {
+      state.classroomList = [...data];
+    },
+    CHANGE_GRADE_LIST(state, data) {
+      state.gradeList = [...data];
     },
   },
   actions: {},

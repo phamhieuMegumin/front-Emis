@@ -14,8 +14,9 @@
     <div class="class-list-container">
       <card-item
         @changeInfo="changeInfo"
-        v-for="(item, index) in [1, 2, 3, 4, 5]"
+        v-for="(classInfo, index) in store.state.classroomList"
         :key="index"
+        :classInfo="classInfo"
       />
     </div>
     <!-- Kết thúc danh sách lớp học -->
@@ -51,14 +52,14 @@
             <!-- Băt đầu input khối -->
             <div class="input-container">
               <label>Khối</label>
-              <el-form-item prop="grade">
+              <el-form-item prop="gradeId">
                 <el-select
-                  v-model="classInfo.grade"
+                  v-model="classInfo.gradeId"
                   filterable
                   placeholder="Chọn khối"
                 >
                   <el-option
-                    v-for="item in options"
+                    v-for="item in optionsGrade"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
@@ -93,10 +94,10 @@
           <!-- Bắt đầu tên lớp -->
           <div class="input-container">
             <label>Tên lớp <span class="required">*</span></label>
-            <el-form-item prop="className">
+            <el-form-item prop="classroomName">
               <el-input
                 placeholder="Khối - Môn"
-                v-model="classInfo.className"
+                v-model="classInfo.classroomName"
                 autocomplete="off"
               />
             </el-form-item>
@@ -117,7 +118,7 @@
           <!-- Kết thúc phần mô tả -->
           <!-- Bắt đầu phần phê duyệt học sinh -->
           <el-switch
-            v-model="classInfo.isapprove"
+            v-model="classInfo.approve"
             active-text="Bật phê duyệt học sinh vào lớp"
             inactive-color="#b6b9ce"
           >
@@ -143,20 +144,29 @@
 <script>
 import CardItem from "@/components/CardItem.vue";
 import { ElMessageBox } from "element-plus";
-import { defineComponent, reactive, ref, watch } from "vue";
-
+import { computed, defineComponent, reactive, ref, watch } from "vue";
+import { useStore } from "vuex";
+import classroomContext from "../../uses/Classroom";
 export default defineComponent({
   components: { CardItem },
   setup() {
+    const {
+      getListClassroom,
+      insertNewClassroom,
+      getListGrade,
+    } = classroomContext();
+    getListClassroom();
+    getListGrade();
+    const store = useStore();
     /**
      * Thông tin lớp học
      */
     const classInfo = reactive({
-      grade: "",
-      subject: [],
-      className: "",
+      gradeId: "",
+      subject: ["0", "1", "2"],
+      classroomName: "",
       description: "",
-      isapprove: false,
+      approve: false,
     });
     // Thực hiện có mở form xác nhận hay không
     const isConfirmDialog = ref(false);
@@ -166,7 +176,7 @@ export default defineComponent({
      * CreatedBy : PQHieu(13/07/2021)
      */
     const rules = reactive({
-      grade: [
+      gradeId: [
         {
           required: true,
           message: "Không được để trống",
@@ -178,7 +188,7 @@ export default defineComponent({
           message: "Không được để trống",
         },
       ],
-      className: [
+      classroomName: [
         {
           required: true,
           message: "Không được để trống",
@@ -191,23 +201,17 @@ export default defineComponent({
         },
       ],
     });
-    /**
-     * Mẫu thử option
-     */
-    const options = ref([
-      {
-        value: "6",
-        label: "Khối 6",
-      },
-      {
-        value: "7",
-        label: "Khối 7",
-      },
-      {
-        value: "8",
-        label: "Khối 8",
-      },
-    ]);
+
+    const optionsGrade = computed(() => {
+      const listGrade = store.state.gradeList.map((item) => {
+        return {
+          value: item.gradeId,
+          label: item.gradeName,
+        };
+      });
+      return listGrade;
+    });
+
     const optionsSubject = ref([
       {
         value: "0",
@@ -233,9 +237,9 @@ export default defineComponent({
     //  * CreatedBy : PQhieu(13/07/2021)
     //  */
     watch(
-      () => classInfo.grade,
+      () => classInfo.gradeId,
       () => {
-        classInfo.className = createClassName();
+        classInfo.classroomName = createclassroomName();
       }
     );
     /**
@@ -245,7 +249,7 @@ export default defineComponent({
     watch(
       () => classInfo.subject,
       () => {
-        classInfo.className = createClassName();
+        classInfo.classroomName = createclassroomName();
       }
     );
     watch(classInfo, () => {
@@ -255,13 +259,19 @@ export default defineComponent({
      *  Tự động tạo tên lớp dựa tên khối lớp và tên lớp
      * CreatedBy: PQHieu(14/07/2021)
      */
-    const createClassName = () => {
+    const createclassroomName = () => {
       let newName = "";
       // Nếu tên khối lớp được lựa chọn trước
-      newName += classInfo.grade; // gán giá trị khối lớp cho tên lớp nếu khối lớp đã được chọn
+      // gán giá trị khối lớp cho tên lớp nếu khối lớp đã được chọn
+      // Thực hiện chuyển đổi giá trị khối lớp từ ID sang tên
+      for (let i = 0; i < optionsGrade.value.length; i++) {
+        if (classInfo.gradeId == optionsGrade.value[i].value) {
+          newName += optionsGrade.value[i].label;
+        }
+      }
       // thực hiện map giá trị của các môn học đã chọn thành tên lớp
       if (classInfo.subject.length > 0) {
-        if (classInfo.grade) newName += " - "; // thêm dấu - nếu tên khối đã được chọn
+        if (classInfo.gradeId) newName += " - "; // thêm dấu - nếu tên khối đã được chọn
         for (let i = 0; i < classInfo.subject.length; i++) {
           for (let j = 0; j < optionsSubject.value.length; j++) {
             if (classInfo.subject[i] == optionsSubject.value[j].value) {
@@ -299,9 +309,13 @@ export default defineComponent({
           closeOnClickModal: false,
           confirmButtonClass: "btn--gradient btn-group-left",
         })
-          .then(() => {
-            console.log("Done");
-            // done();
+          .then(async () => {
+            try {
+              await insertNewClassroom(classInfo);
+              done();
+            } catch (error) {
+              console.log(error);
+            }
           })
           .catch(() => {
             done();
@@ -319,7 +333,7 @@ export default defineComponent({
       Object.assign(classInfo, {
         grade: "",
         subject: [],
-        className: "",
+        classroomName: "",
         description: "",
       });
       // Thực hiện đặt lại kiểm tra có mở form xác nhận không
@@ -329,10 +343,17 @@ export default defineComponent({
      * Thực hiện lưu dữ liệu
      */
     const handleSave = () => {
-      ruleForm.value.validate((valid) => {
+      ruleForm.value.validate(async (valid) => {
         if (valid) {
           // thực hiện khi check thành công
-          dialogVisible.value = false; // thực hiện đóng form
+          try {
+            await insertNewClassroom(classInfo);
+            dialogVisible.value = false; // thực hiện đóng form
+            // Load lại dữ liệu danh sách lớp học
+            await getListClassroom();
+          } catch (error) {
+            console.log(error);
+          }
         }
       });
     };
@@ -341,13 +362,14 @@ export default defineComponent({
       dialogVisible,
       handleClose,
       classInfo,
-      options,
+      optionsGrade,
       optionsSubject,
       rules,
       changeInfo,
       handleCloseDialog,
       ruleForm,
       handleSave,
+      store,
     };
   },
 });
