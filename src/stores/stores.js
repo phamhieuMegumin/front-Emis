@@ -14,6 +14,7 @@ const store = createStore({
     testTitle: [""],
     classroomList: [],
     gradeList: [],
+    subjectList: [],
   },
   mutations: {
     CHANGE_AUTHENTICATION(state, data) {
@@ -31,6 +32,9 @@ const store = createStore({
     },
     CHANGE_GRADE_LIST(state, data) {
       state.gradeList = [...data];
+    },
+    CHANGE_SUBJECT_LIST(state, data) {
+      state.subjectList = [...data];
     },
   },
   actions: {},

@@ -38,7 +38,12 @@
               Chỉnh sửa thông tin lớp
             </div>
             <div class="option-item">Ngừng theo dõi</div>
-            <div class="option-item">Xóa lớp</div>
+            <div
+              @click="handleDeleteClassroom(classInfo.classroomId)"
+              class="option-item"
+            >
+              Xóa lớp
+            </div>
           </div>
           <template #reference>
             <div class="button-more">
@@ -58,9 +63,11 @@
 </template>
 
 <script>
+import classroomContext from "../uses/Classroom";
 export default {
   props: ["classInfo"],
   setup(props, context) {
+    const { deleteClassroom, getListClassroom } = classroomContext();
     /**
      * Bắt sự kiện thay đổi thông tin lớp học
      * CreatedBy : PQhieu(13/07/2021)
@@ -68,8 +75,18 @@ export default {
     const handleChangeinfo = () => {
       context.emit("changeInfo");
     };
+
+    const handleDeleteClassroom = async (classroomId) => {
+      try {
+        await deleteClassroom(classroomId);
+        await getListClassroom();
+      } catch (error) {
+        console.log(error);
+      }
+    };
     return {
       handleChangeinfo,
+      handleDeleteClassroom,
     };
   },
 };

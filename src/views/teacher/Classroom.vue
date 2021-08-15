@@ -118,7 +118,6 @@
           <!-- Kết thúc phần mô tả -->
           <!-- Bắt đầu phần phê duyệt học sinh -->
           <el-switch
-            v-model="classInfo.approve"
             active-text="Bật phê duyệt học sinh vào lớp"
             inactive-color="#b6b9ce"
           >
@@ -154,19 +153,25 @@ export default defineComponent({
       getListClassroom,
       insertNewClassroom,
       getListGrade,
+      getListSubject,
+      insertNewManageSubject,
     } = classroomContext();
+    // Lấy danh sách lớp học
     getListClassroom();
+    // Lấy danh sách các khối lớp
     getListGrade();
+    // lấy danh sách các môn học
+    getListSubject();
     const store = useStore();
     /**
      * Thông tin lớp học
      */
     const classInfo = reactive({
       gradeId: "",
-      subject: ["0", "1", "2"],
+      subject: [],
       classroomName: "",
       description: "",
-      approve: false,
+      // approve: 0,
     });
     // Thực hiện có mở form xác nhận hay không
     const isConfirmDialog = ref(false);
@@ -212,20 +217,16 @@ export default defineComponent({
       return listGrade;
     });
 
-    const optionsSubject = ref([
-      {
-        value: "0",
-        label: "Toán",
-      },
-      {
-        value: "1",
-        label: "Lý",
-      },
-      {
-        value: "2",
-        label: "Hóa",
-      },
-    ]);
+    const optionsSubject = computed(() => {
+      const listSubject = store.state.subjectList.map((item) => {
+        return {
+          value: item.subjectId,
+          label: item.subjectName,
+        };
+      });
+      return listSubject;
+    });
+
     /**
      * Ẩn hiện dialog nhập
      * CreatedBy : PQHieu(13/07/2021)
@@ -331,7 +332,7 @@ export default defineComponent({
     const handleCloseDialog = () => {
       // Thực hiện reset dialog
       Object.assign(classInfo, {
-        grade: "",
+        gradeId: "",
         subject: [],
         classroomName: "",
         description: "",
@@ -347,7 +348,14 @@ export default defineComponent({
         if (valid) {
           // thực hiện khi check thành công
           try {
-            await insertNewClassroom(classInfo);
+            const newClassroom = { ...classInfo, subject: null };
+            await insertNewClassroom(newClassroom);
+            var newListSubject = classInfo.subject.map((item) => {
+              return {
+                subjectId: item,
+              };
+            });
+            await insertNewManageSubject(newListSubject);
             dialogVisible.value = false; // thực hiện đóng form
             // Load lại dữ liệu danh sách lớp học
             await getListClassroom();

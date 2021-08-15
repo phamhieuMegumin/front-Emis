@@ -15,15 +15,19 @@ export default function() {
     }
   };
   const insertNewClassroom = async (classroom) => {
-    try {
-      await axios({
-        method: "post",
-        url: "/classrooms",
-        data: classroom,
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    await axios({
+      method: "post",
+      url: "/classrooms",
+      data: classroom,
+    });
+  };
+
+  const insertNewManageSubject = async (listSubject) => {
+    await axios({
+      method: "post",
+      url: "/manageSubjects/insertList",
+      data: listSubject,
+    });
   };
 
   const getListGrade = async () => {
@@ -34,9 +38,25 @@ export default function() {
       console.log(error);
     }
   };
+
+  const getListSubject = async () => {
+    try {
+      const data = await axios.get("/subjects");
+      store.commit("CHANGE_SUBJECT_LIST", data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const deleteClassroom = async (classroomId) => {
+    await axios.delete(`/classrooms/${classroomId}`);
+  };
   return {
     getListClassroom,
     insertNewClassroom,
     getListGrade,
+    getListSubject,
+    insertNewManageSubject,
+    deleteClassroom,
   };
 }
