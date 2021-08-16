@@ -48,6 +48,18 @@ export default function() {
     }
   };
 
+  const getClassroomById = async (classroomId) => {
+    try {
+      const data = await axios({
+        method: "get",
+        url: `/classrooms/${classroomId}`,
+      });
+      store.commit("CHANGE_CLASSROOM_INFO", data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const deleteClassroom = async (classroomId) => {
     await axios.delete(`/classrooms/${classroomId}`);
   };
@@ -57,6 +69,7 @@ export default function() {
     getListGrade,
     getListSubject,
     insertNewManageSubject,
+    getClassroomById,
     deleteClassroom,
   };
 }

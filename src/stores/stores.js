@@ -15,6 +15,7 @@ const store = createStore({
     classroomList: [],
     gradeList: [],
     subjectList: [],
+    classroomInfo: null,
   },
   mutations: {
     CHANGE_AUTHENTICATION(state, data) {
@@ -35,6 +36,9 @@ const store = createStore({
     },
     CHANGE_SUBJECT_LIST(state, data) {
       state.subjectList = [...data];
+    },
+    CHANGE_CLASSROOM_INFO(state, data) {
+      state.classroomInfo = { ...data };
     },
   },
   actions: {},

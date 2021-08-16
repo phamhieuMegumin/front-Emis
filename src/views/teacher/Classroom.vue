@@ -155,6 +155,7 @@ export default defineComponent({
       getListGrade,
       getListSubject,
       insertNewManageSubject,
+      getClassroomById,
     } = classroomContext();
     // Lấy danh sách lớp học
     getListClassroom();
@@ -289,7 +290,20 @@ export default defineComponent({
      * Thực hiện chỉnh sửa thông tin lớp học
      * CreatedBy : PQHieu(13/07/2021)
      */
-    const changeInfo = () => {
+    const changeInfo = async (classroomId) => {
+      // Lấy thông tin lớp học
+      await getClassroomById(classroomId);
+      var newClassInfo = { ...store.state.classroomInfo };
+      // Loại bỏ các thuộc tính trả về không cần thiết
+      var configClassInfo = {
+        gradeId: newClassInfo.gradeId,
+        subject: [...newClassInfo.subject],
+        classroomName: newClassInfo.classroomName,
+        description: newClassInfo.description,
+      };
+      // Cập nhật lại thông tin lớp học để hiển thị
+      Object.assign(classInfo, configClassInfo);
+      // Hiển thị dialog chỉnh sửa
       dialogVisible.value = true;
     };
 

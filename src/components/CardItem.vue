@@ -34,7 +34,10 @@
           :offset="-10"
         >
           <div class="popover-option-container">
-            <div class="option-item" @click="handleChangeinfo">
+            <div
+              class="option-item"
+              @click="handleChangeinfo(classInfo.classroomId)"
+            >
               Chỉnh sửa thông tin lớp
             </div>
             <div class="option-item">Ngừng theo dõi</div>
@@ -72,8 +75,8 @@ export default {
      * Bắt sự kiện thay đổi thông tin lớp học
      * CreatedBy : PQhieu(13/07/2021)
      */
-    const handleChangeinfo = () => {
-      context.emit("changeInfo");
+    const handleChangeinfo = (classroomId) => {
+      context.emit("changeInfo", classroomId);
     };
 
     const handleDeleteClassroom = async (classroomId) => {
