@@ -156,6 +156,8 @@ export default defineComponent({
       getListSubject,
       insertNewManageSubject,
       getClassroomById,
+      updateClassroom,
+      updateManageSubject,
     } = classroomContext();
     // Lấy danh sách lớp học
     getListClassroom();
@@ -176,6 +178,10 @@ export default defineComponent({
     });
     // Thực hiện có mở form xác nhận hay không
     const isConfirmDialog = ref(false);
+    // Chế độ thêm mới hoặc cập nhật
+    var updateMode = false;
+    // ID lớp học cần sửa;
+    var updateClassroomId = null;
     const ruleForm = ref(null);
     /**
      *  Quy chuẩn kiểm tra form
@@ -291,6 +297,10 @@ export default defineComponent({
      * CreatedBy : PQHieu(13/07/2021)
      */
     const changeInfo = async (classroomId) => {
+      // Đổi sang chế độ cập nhật
+      updateMode = true;
+      // Cập nhật ID lớp học cần sửa
+      updateClassroomId = classroomId;
       // Lấy thông tin lớp học
       await getClassroomById(classroomId);
       var newClassInfo = { ...store.state.classroomInfo };
@@ -353,6 +363,10 @@ export default defineComponent({
       });
       // Thực hiện đặt lại kiểm tra có mở form xác nhận không
       isConfirmDialog.value = false;
+      // Đóng chế độ cập nhật
+      updateMode = false;
+      // Hủy bỏ ID lớp học
+      updateClassroomId = null;
     };
     /**
      * Thực hiện lưu dữ liệu
@@ -363,13 +377,26 @@ export default defineComponent({
           // thực hiện khi check thành công
           try {
             const newClassroom = { ...classInfo, subject: null };
-            await insertNewClassroom(newClassroom);
+            if (!updateMode) {
+              // Thêm mới lớp học
+              await insertNewClassroom(newClassroom);
+            } else {
+              // Cập nhật lớp học
+              await updateClassroom(updateClassroomId, newClassroom);
+            }
+            // Config danh sách quản lý môn học
             var newListSubject = classInfo.subject.map((item) => {
               return {
                 subjectId: item,
               };
             });
-            await insertNewManageSubject(newListSubject);
+            if (!updateMode) {
+              // Thêm mới quản lý lớp học
+              await insertNewManageSubject(newListSubject);
+            } else {
+              // Cập nhật quản lý lớp học
+              await updateManageSubject(updateClassroomId, newListSubject);
+            }
             dialogVisible.value = false; // thực hiện đóng form
             // Load lại dữ liệu danh sách lớp học
             await getListClassroom();

@@ -30,6 +30,22 @@ export default function() {
     });
   };
 
+  const updateClassroom = async (classroomId, classroom) => {
+    await axios({
+      method: "put",
+      url: `/classrooms/${classroomId}`,
+      data: classroom,
+    });
+  };
+
+  const updateManageSubject = async (classroomId, listSubject) => {
+    await axios({
+      method: "put",
+      url: `/manageSubjects/updateList/${classroomId}`,
+      data: listSubject,
+    });
+  };
+
   const getListGrade = async () => {
     try {
       const data = await axios.get("/grades");
@@ -71,5 +87,7 @@ export default function() {
     insertNewManageSubject,
     getClassroomById,
     deleteClassroom,
+    updateClassroom,
+    updateManageSubject,
   };
 }
