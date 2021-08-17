@@ -14,7 +14,7 @@
       <div class="container form-content">
         <!-- Bắt đầu form input -->
         <div class="tab-container">
-          <el-form :model="userAccount" :rules="rules">
+          <el-form :model="userAccount" :rules="rules" ref="ruleForm">
             <!-- Bắt đầu Input userName -->
             <div class="row-input row-2">
               <el-form-item prop="fullName">
@@ -124,9 +124,7 @@
 </template>
 
 <script>
-import { reactive } from "vue";
-import Notification from "../../uses/Notification";
-import axios from "axios";
+import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import AuthManager from "../../uses/Auth";
 // import { useStore } from "vuex";
@@ -157,13 +155,25 @@ export default {
           message: "Không được để trống",
           trigger: "blur",
         },
+        {
+          pattern: /(84|0[3|5|7|8|9])+([0-9]{8})\b/g,
+          message: "Số điện thoại không đúng định dạng",
+          trigger: "blur",
+        },
       ],
       email: [
         {
           required: false,
         },
+        {
+          message: "Email không hợp lệ",
+          pattern: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+          trigger: "blur",
+        },
       ],
     });
+
+    const ruleForm = ref(null);
     /**
      * Thông tin account
      * CreatedBy: PQHieu(12/07/2021)
@@ -176,7 +186,7 @@ export default {
     });
     const { handleRegister } = AuthManager();
     // const store = useStore();
-    const { successNotify, ErrorNotify } = Notification();
+    // const { successNotify, ErrorNotify } = Notification();
     const router = useRouter();
 
     const handleBackLogin = () => {
@@ -187,29 +197,19 @@ export default {
      * CreatedBy: PQhieu(18/07/2021)
      */
     const handleSubmit = () => {
-      handleRegister(userAccount);
+      ruleForm.value.validate(async (valid) => {
+        if (valid) {
+          await handleRegister(userAccount);
+        }
+      });
     };
-    const register = async () => {
-      try {
-        await axios({
-          method: "post",
-          url: "https://localhost:44308/api/v1/Users/Register",
-          data: userAccount,
-        });
-        await successNotify();
-        setTimeout(() => {
-          router.push("/login");
-        }, 1000);
-      } catch (error) {
-        ErrorNotify();
-      }
-    };
+
     return {
       userAccount,
       handleSubmit,
-      register,
       handleBackLogin,
       rules,
+      ruleForm,
     };
   },
 };

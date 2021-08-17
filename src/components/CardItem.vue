@@ -15,7 +15,7 @@
         <div class="line"></div>
         <div class="bottom">
           <div class="class-code">
-            Mã lớp - Q76E76
+            Mã lớp - {{ classInfo.classroomCode }}
             <img
               src="https://testqlthapp.misacdn.net/r/ontap/img/ic_zoom.e5a06701.svg"
               width="34"
@@ -42,7 +42,12 @@
             </div>
             <div class="option-item">Ngừng theo dõi</div>
             <div
-              @click="handleDeleteClassroom(classInfo.classroomId)"
+              @click="
+                handleDeleteClassroom(
+                  classInfo.classroomId,
+                  classInfo.classroomCode
+                )
+              "
               class="option-item"
             >
               Xóa lớp
@@ -66,11 +71,21 @@
 </template>
 
 <script>
+//#region Import
 import classroomContext from "../uses/Classroom";
+import { ElMessageBox } from "element-plus";
+import NotificationContext from "../uses/Notification";
+//#endregion
 export default {
   props: ["classInfo"],
   setup(props, context) {
+    //#region Khai báo
     const { deleteClassroom, getListClassroom } = classroomContext();
+    const { successNotify } = NotificationContext();
+    //#endregion
+
+    //#region Methods
+
     /**
      * Bắt sự kiện thay đổi thông tin lớp học
      * CreatedBy : PQhieu(13/07/2021)
@@ -79,14 +94,41 @@ export default {
       context.emit("changeInfo", classroomId);
     };
 
-    const handleDeleteClassroom = async (classroomId) => {
-      try {
-        await deleteClassroom(classroomId);
-        await getListClassroom();
-      } catch (error) {
-        console.log(error);
-      }
+    /**
+     *  Thực hiện xóa lớp học
+     * @param="classroomId" : ID của lớp học cần xóa
+     * CreatedBy : PQHieu(17/08/2021)
+     */
+    const handleDeleteClassroom = async (classroomId, classroomCode) => {
+      ElMessageBox.confirm(
+        `Bạn có muốn xóa lớp học có mã ${classroomCode} không?`,
+        {
+          title: "EMIS Ôn tập",
+          showClose: false,
+          dangerouslyUseHTMLString: true,
+          confirmButtonText: "Xóa",
+          cancelButtonText: "Hủy",
+          closeOnClickModal: false,
+          confirmButtonClass: "btn--gradient btn-group-left",
+        }
+      )
+        .then(async () => {
+          try {
+            // Xóa lớp học
+            await deleteClassroom(classroomId);
+            successNotify("Lớp học đã được xóa");
+            // Lấy lại danh sách lớp học
+            await getListClassroom();
+          } catch (error) {
+            console.log(error);
+          }
+        })
+        .catch(() => {
+          console.log("Cancel");
+        });
     };
+    //#endregion
+
     return {
       handleChangeinfo,
       handleDeleteClassroom,
@@ -145,6 +187,9 @@ export default {
   line-height: 28px;
   padding-right: 12px;
   color: #4e5b6a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .line {
   height: 1px;

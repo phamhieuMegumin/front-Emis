@@ -152,21 +152,7 @@ export default {
     const handleSubmit = () => {
       handleLogin(account);
     };
-    // const login = async () => {
-    //   try {
-    //     const data = await axios({
-    //       method: "post",
-    //       url: "https://localhost:44308/api/v1/Users/Login",
-    //       data: account,
-    //     });
-    //     localStorage.setItem("JWT", data.data.token);
-    //     store.commit("CHANGE_AUTHENTICATION", data.data.userInfo);
-    //     router.push("/");
-    //   } catch (error) {
-    //     ErrorNotify();
-    //     console.log(error);
-    //   }
-    // };
+
     return {
       account,
       handleSubmit,

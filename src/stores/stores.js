@@ -11,11 +11,11 @@ const store = createStore({
       gender: null,
       role: null,
     },
-    testTitle: [""],
     classroomList: [],
     gradeList: [],
     subjectList: [],
     classroomInfo: null,
+    loading: false,
   },
   mutations: {
     CHANGE_AUTHENTICATION(state, data) {
@@ -39,6 +39,9 @@ const store = createStore({
     },
     CHANGE_CLASSROOM_INFO(state, data) {
       state.classroomInfo = { ...data };
+    },
+    CHANGE_LOADING(state) {
+      state.loading = !state.loading;
     },
   },
   actions: {},

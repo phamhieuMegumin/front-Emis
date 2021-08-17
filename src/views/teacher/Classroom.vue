@@ -1,5 +1,5 @@
 <template>
-  <div class="classroom-container">
+  <div class="classroom-container" v-loading="store.state.loading">
     <!-- Bắt đầu header -->
     <div class="header">
       <div class="title">Danh sách lớp đang quản lý</div>
@@ -23,7 +23,7 @@
   </div>
   <!-- Bắt đầu dialog -->
   <el-dialog
-    title="Tạo lớp mới"
+    :title="titleDialog"
     v-model="dialogVisible"
     width="668px"
     :before-close="handleClose"
@@ -146,9 +146,13 @@ import { ElMessageBox } from "element-plus";
 import { computed, defineComponent, reactive, ref, watch } from "vue";
 import { useStore } from "vuex";
 import classroomContext from "../../uses/Classroom";
+import NotificationContext from "../../uses/Notification";
 export default defineComponent({
   components: { CardItem },
   setup() {
+    //#region Khai báo
+
+    // Lấy các hàm API từ classroomContext
     const {
       getListClassroom,
       insertNewClassroom,
@@ -159,13 +163,12 @@ export default defineComponent({
       updateClassroom,
       updateManageSubject,
     } = classroomContext();
-    // Lấy danh sách lớp học
-    getListClassroom();
-    // Lấy danh sách các khối lớp
-    getListGrade();
-    // lấy danh sách các môn học
-    getListSubject();
+
+    // Khai báo store
     const store = useStore();
+    // Khai báo toastMessage
+    const { successNotify } = NotificationContext();
+
     /**
      * Thông tin lớp học
      */
@@ -178,6 +181,8 @@ export default defineComponent({
     });
     // Thực hiện có mở form xác nhận hay không
     const isConfirmDialog = ref(false);
+    // Thay đổi title của dialog
+    const titleDialog = ref("Tạo lớp mới");
     // Chế độ thêm mới hoặc cập nhật
     var updateMode = false;
     // ID lớp học cần sửa;
@@ -214,6 +219,30 @@ export default defineComponent({
       ],
     });
 
+    /**
+     * Ẩn hiện dialog nhập
+     * CreatedBy : PQHieu(13/07/2021)
+     */
+    const dialogVisible = ref(false);
+
+    //#endregion
+
+    //#region Các hàm chạy để lấy dữ liệu
+    // Lấy danh sách lớp học
+    getListClassroom();
+    // Lấy danh sách các khối lớp
+    getListGrade();
+    // lấy danh sách các môn học
+    getListSubject();
+    //#endregion
+
+    //#region Computed
+
+    /**
+     * Config danh sách khối học để tiến hành hiển thị
+     * value : ID khối học
+     * label : Tên khối học với ID tương ứng
+     */
     const optionsGrade = computed(() => {
       const listGrade = store.state.gradeList.map((item) => {
         return {
@@ -224,6 +253,11 @@ export default defineComponent({
       return listGrade;
     });
 
+    /**
+     * Config danh sách môn học để tiến hành hiển thị
+     * value : ID môn học
+     * label : Tên môn học với ID tương ứng
+     */
     const optionsSubject = computed(() => {
       const listSubject = store.state.subjectList.map((item) => {
         return {
@@ -233,13 +267,9 @@ export default defineComponent({
       });
       return listSubject;
     });
+    //#endregion
 
-    /**
-     * Ẩn hiện dialog nhập
-     * CreatedBy : PQHieu(13/07/2021)
-     */
-    const dialogVisible = ref(false);
-
+    //#region Watch
     // /**
     //  * Theo dõi giá trị của khối và bộ môn để thay đổi giá trị tên lớp
     //  * CreatedBy : PQhieu(13/07/2021)
@@ -263,6 +293,10 @@ export default defineComponent({
     watch(classInfo, () => {
       isConfirmDialog.value = true;
     });
+    //#endregion
+
+    //#region Methods
+
     /**
      *  Tự động tạo tên lớp dựa tên khối lớp và tên lớp
      * CreatedBy: PQHieu(14/07/2021)
@@ -301,6 +335,8 @@ export default defineComponent({
       updateMode = true;
       // Cập nhật ID lớp học cần sửa
       updateClassroomId = classroomId;
+      // Thay đổi title dialog
+      titleDialog.value = "Cập nhật lớp học";
       // Lấy thông tin lớp học
       await getClassroomById(classroomId);
       var newClassInfo = { ...store.state.classroomInfo };
@@ -335,12 +371,8 @@ export default defineComponent({
           confirmButtonClass: "btn--gradient btn-group-left",
         })
           .then(async () => {
-            try {
-              await insertNewClassroom(classInfo);
-              done();
-            } catch (error) {
-              console.log(error);
-            }
+            await handleSave();
+            done();
           })
           .catch(() => {
             done();
@@ -349,6 +381,7 @@ export default defineComponent({
         done();
       }
     };
+
     /**
      * Bắt sự kiện khi close dialog
      * CreatedBy : PQHieu(13/07/2021)
@@ -367,7 +400,10 @@ export default defineComponent({
       updateMode = false;
       // Hủy bỏ ID lớp học
       updateClassroomId = null;
+      // Thay đổi title Dialog
+      titleDialog.value = "Tạo lớp mới";
     };
+
     /**
      * Thực hiện lưu dữ liệu
      */
@@ -398,6 +434,9 @@ export default defineComponent({
               await updateManageSubject(updateClassroomId, newListSubject);
             }
             dialogVisible.value = false; // thực hiện đóng form
+            // Thông báo thành công cho người dùng
+            if (!updateMode) successNotify("Lớp học đã được tạo");
+            else successNotify("Lớp học đã được cập nhật");
             // Load lại dữ liệu danh sách lớp học
             await getListClassroom();
           } catch (error) {
@@ -406,6 +445,7 @@ export default defineComponent({
         }
       });
     };
+    //#endregion
 
     return {
       dialogVisible,
@@ -419,6 +459,7 @@ export default defineComponent({
       ruleForm,
       handleSave,
       store,
+      titleDialog,
     };
   },
 });

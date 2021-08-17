@@ -2,12 +2,12 @@
 import { ElNotification } from "element-plus";
 
 export default function() {
-  const successNotify = () => {
+  const successNotify = (message) => {
     ElNotification({
       title: "Success",
-      message: "Thêm thành công",
+      message: message,
       type: "success",
-      duration: 1000,
+      duration: 3000,
     });
   };
   const errorNotify = (message) => {

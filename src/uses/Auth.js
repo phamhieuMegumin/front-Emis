@@ -1,10 +1,10 @@
 import axios from "axios";
 import { useRouter } from "vue-router";
-import { useStore } from "vuex";
-
+import NotificationContext from "../uses/Notification";
+import store from "../stores/stores";
 export default function() {
-  const store = useStore();
   const router = useRouter();
+  const { successNotify } = NotificationContext();
   /**
    * Kiểm tra tình trạng login của người dùng
    * CreatedBy : PQhieu(18/07/2021)
@@ -30,7 +30,7 @@ export default function() {
         data: account,
       });
       localStorage.setItem("JWT", data.data.token);
-      store.commit("CHANGE_AUTHENTICATION", data.data.userInfo);
+      store.commit("CHANGE_AUTHENTICATION", data.data.accountInfo);
       router.push("/teacher/classroom");
     } catch (error) {
       console.log(error);
@@ -48,6 +48,7 @@ export default function() {
         url: "accounts/register",
         data: account,
       });
+      successNotify("Tài khoản đã đăng ký thành công");
       router.push("/login");
     } catch (error) {
       console.log(error);
