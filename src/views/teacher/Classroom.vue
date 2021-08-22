@@ -1,5 +1,9 @@
 <template>
-  <div class="classroom-container" v-loading="store.state.loading">
+  <div
+    class="classroom-container"
+    ref="rootClassroom"
+    v-loading="store.state.loading"
+  >
     <!-- Bắt đầu header -->
     <div class="header">
       <div class="title">Danh sách lớp đang quản lý</div>
@@ -41,10 +45,20 @@
       <div class="container">
         <div class="dialog-content">
           <div class="content-left">
-            <div class="image-container">
-              <img src="" />
-            </div>
-            <div class="change">Thay ảnh đại diện</div>
+            <label class="image-container" for="imgSelect">
+              <!-- <img
+                src="https://localhost:44359/api/v1/FileUploads?fileName=testFile_uplaod"
+              /> -->
+              <input
+                class="imgSelect"
+                type="file"
+                @change="seletedFile"
+                id="imgSelect"
+              />
+              <button @click="upLoad">Test</button>
+              <!-- test end -->
+            </label>
+            <label for="imgSelect" class="change">Thay ảnh đại diện</label>
           </div>
         </div>
         <div class="content-right">
@@ -143,10 +157,18 @@
 <script>
 import CardItem from "@/components/CardItem.vue";
 import { ElMessageBox } from "element-plus";
-import { computed, defineComponent, reactive, ref, watch } from "vue";
+import {
+  computed,
+  defineComponent,
+  reactive,
+  ref,
+  watch,
+  watchEffect,
+} from "vue";
 import { useStore } from "vuex";
 import classroomContext from "../../uses/Classroom";
 import NotificationContext from "../../uses/Notification";
+import ImageContext from "../../uses/Image";
 export default defineComponent({
   components: { CardItem },
   setup() {
@@ -163,6 +185,7 @@ export default defineComponent({
       updateClassroom,
       updateManageSubject,
     } = classroomContext();
+    const { uploadimage } = ImageContext();
 
     // Khai báo store
     const store = useStore();
@@ -187,6 +210,10 @@ export default defineComponent({
     var updateMode = false;
     // ID lớp học cần sửa;
     var updateClassroomId = null;
+
+    // file hình ảnh lớp học
+    const imageFile = ref("");
+
     const ruleForm = ref(null);
     /**
      *  Quy chuẩn kiểm tra form
@@ -224,7 +251,6 @@ export default defineComponent({
      * CreatedBy : PQHieu(13/07/2021)
      */
     const dialogVisible = ref(false);
-
     //#endregion
 
     //#region Các hàm chạy để lấy dữ liệu
@@ -247,7 +273,7 @@ export default defineComponent({
       const listGrade = store.state.gradeList.map((item) => {
         return {
           value: item.gradeId,
-          label: item.gradeName,
+          label: `Khối ${item.gradeName}`,
         };
       });
       return listGrade;
@@ -278,6 +304,7 @@ export default defineComponent({
       () => classInfo.gradeId,
       () => {
         classInfo.classroomName = createclassroomName();
+        if (classInfo.gradeId.length > 0) isConfirmDialog.value = true;
       }
     );
     /**
@@ -288,15 +315,31 @@ export default defineComponent({
       () => classInfo.subject,
       () => {
         classInfo.classroomName = createclassroomName();
+        if (classInfo.subject.length > 0) isConfirmDialog.value = true;
       }
     );
-    watch(classInfo, () => {
-      isConfirmDialog.value = true;
-    });
+    watch(
+      () => classInfo.description,
+      () => {
+        if (classInfo.description.length > 0) isConfirmDialog.value = true;
+      }
+    );
+    watch(
+      () => classInfo.classroomName,
+      () => {
+        if (classInfo.classroomName.length > 0) isConfirmDialog.value = true;
+      }
+    );
     //#endregion
 
     //#region Methods
+    const seletedFile = async (event) => {
+      imageFile.value = event.target.files[0];
+    };
 
+    const upLoad = () => {
+      uploadimage(imageFile.value);
+    };
     /**
      *  Tự động tạo tên lớp dựa tên khối lớp và tên lớp
      * CreatedBy: PQHieu(14/07/2021)
@@ -357,7 +400,15 @@ export default defineComponent({
      * Thực hiện xác nhận khi đóng dialog
      * CreatedBy : PQHieu(13/07/2021)
      */
-
+    const rootClassroom = ref(null);
+    watchEffect(
+      () => {
+        console.log(rootClassroom.value); // => <div>This is a root element</div>
+      },
+      {
+        flush: "post",
+      }
+    );
     const handleClose = (done) => {
       // Chỉ thực hiện mở form xác nhận khi isConfirmDialog = true
       if (isConfirmDialog.value) {
@@ -377,6 +428,15 @@ export default defineComponent({
           .catch(() => {
             done();
           });
+
+        // Test
+        // ElMessageBox.confirm(null, {
+        //   showClose: false,
+        //   showConfirmButton: false,
+        //   cancelButtonText: "Không lưu",
+        //   closeOnClickModal: false,
+        //   customClass: "testMessageBox",
+        // });
       } else {
         done();
       }
@@ -460,6 +520,9 @@ export default defineComponent({
       handleSave,
       store,
       titleDialog,
+      rootClassroom,
+      seletedFile,
+      upLoad,
     };
   },
 });
@@ -513,20 +576,27 @@ export default defineComponent({
 }
 
 .image-container {
+  display: block;
   border-radius: 10px;
   border: 1px solid rgb(182, 185, 206);
   width: 211px;
   height: 112px;
   overflow: hidden;
+  cursor: pointer;
+}
+.imgSelect {
+  display: none;
 }
 .container {
   margin-top: 0;
 }
 .change {
+  display: block;
   font-weight: 500;
   color: rgb(138, 107, 246);
   margin-top: 12px;
   text-align: center;
+  cursor: pointer;
 }
 .row-2 {
   display: flex;

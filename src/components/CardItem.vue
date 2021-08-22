@@ -16,11 +16,7 @@
         <div class="bottom">
           <div class="class-code">
             Mã lớp - {{ classInfo.classroomCode }}
-            <img
-              src="https://testqlthapp.misacdn.net/r/ontap/img/ic_zoom.e5a06701.svg"
-              width="34"
-              height="34"
-            />
+            <img src="../assets/share.png" width="20" height="20" />
           </div>
           <!---->
         </div>
@@ -56,7 +52,7 @@
           <template #reference>
             <div class="button-more">
               <img
-                src="https://testqlthapp.misacdn.net/r/ontap/img/ic_AnswerMore.38ee007c.svg"
+                src="../assets/ic_AnswerMore.38ee007c.svg"
                 width="10"
                 height="20"
               />
@@ -160,7 +156,7 @@ export default {
 }
 .thumbnail-wrapper {
   height: 150px;
-  background: url("https://testqlthapp.misacdn.net/r/ontap/img/toan.10218e68.png");
+  background: url("../assets/toan.10218e68.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
@@ -216,6 +212,9 @@ export default {
   align-items: center;
   line-height: 34px;
   color: #4e5b6a;
+}
+.class-item-wrapper .description .bottom .class-code > img {
+  margin-left: 10px;
 }
 .class-item-wrapper .description .button-more {
   position: absolute;

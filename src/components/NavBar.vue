@@ -2,27 +2,31 @@
   <div class="header-container navBar">
     <!-- Bắt đầu nav link -->
     <div class="nav-link">
-      <div class="nav-link-item">
+      <div class="items-center p-4">
         <router-link to="/">
           <img
-            src="https://testqlthapp.misacdn.net/r/ontap/img/ic_chart.728bdf38.svg"
+            class="cursor-pointer"
+            src="../assets/logo_login.084a83c4.svg"
+            width="40"
+            height="35"
           />
+        </router-link>
+      </div>
+      <div class="nav-link-item">
+        <router-link to="/">
+          <img src="../assets/ic_chart.728bdf38.svg" />
           <div class="item-text">Tổng quan</div>
         </router-link>
       </div>
       <div class="nav-link-item">
         <router-link to="/teacher/classroom">
-          <img
-            src="https://testqlthapp.misacdn.net/r/ontap/img/ic_home.465f7016.svg"
-          />
+          <img src="../assets/ic_home.465f7016.svg" />
           <div class="item-text">Lớp học</div>
         </router-link>
       </div>
       <div class="nav-link-item">
         <router-link to="/">
-          <img
-            src="https://testqlthapp.misacdn.net/r/ontap/img/ic_multi.d199c255.svg"
-          />
+          <img src="../assets/ic_multi.d199c255.svg" />
           <div class="item-text">Học liệu</div>
         </router-link>
       </div>
@@ -33,7 +37,7 @@
       <div class="help-container">
         <img
           class="help"
-          src="https://testqlthapp.misacdn.net/r/ontap/img/ic_Setting_24.9ebabebf.svg"
+          src="../assets/ic_Setting_24.9ebabebf.svg"
           width="24"
           height="24"
         />
@@ -41,7 +45,7 @@
       <div class="help-container">
         <img
           class="help"
-          src="https://testqlthapp.misacdn.net/r/ontap/img/ic_Help_20.3bfad484.svg"
+          src="../assets/ic_Help_20.3bfad484.svg"
           width="24"
           height="24"
         />
@@ -49,7 +53,7 @@
       <div class="notify-container">
         <img
           class="icon"
-          src="https://testqlthapp.misacdn.net/r/ontap/img/ic_Noti_24.fcf6e908.svg"
+          src="../assets/ic_Noti_24.fcf6e908.svg"
           width="24"
           height="24"
         /><!---->
@@ -63,10 +67,7 @@
                 store.state.userInfo.fullName
               }}</span>
             </div>
-            <img
-              class="image"
-              src="https://testqlthapp.misacdn.net/r/ontap/img/default.be082d1e.svg"
-            />
+            <img class="image" src="../assets/getavatar.png" />
           </div>
         </div>
       </div>
@@ -77,7 +78,6 @@
 
 <script>
 import { useStore } from "vuex";
-
 export default {
   setup() {
     const store = useStore();
@@ -97,6 +97,12 @@ export default {
   position: sticky;
   background: #fff;
   top: 0;
+}
+
+.items-center > a {
+  display: flex;
+  align-items: center;
+  padding: 16px;
 }
 .nav-link {
   height: 100%;
@@ -122,7 +128,7 @@ export default {
   filter: grayscale(100%);
 }
 .item-text {
-  font-weight: 700;
+  font-size: 16px;
 }
 
 /* Bắt đàu header right */
@@ -197,6 +203,7 @@ a.router-link-active {
 }
 a.router-link-active .item-text {
   color: #8a6bf6;
+  font-weight: 700;
 }
 a.router-link-active img {
   filter: grayscale(0);

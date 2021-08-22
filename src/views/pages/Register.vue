@@ -4,7 +4,7 @@
       <div class="logo">
         <img
           class="back-img"
-          src="https://testqlthapp.misacdn.net/r/ontap/img/ic_back.d6de4fc8.svg"
+          src="../../assets/ic_back.d6de4fc8.svg"
           width="44"
           height="36"
           @click="handleBackLogin"
@@ -25,7 +25,7 @@
                   <template #prefix>
                     <div class="input-prefix-icon">
                       <img
-                        src="https://testqlthapp.misacdn.net/r/ontap/img/icon_user.eb8ff65a.svg"
+                        src="../../assets/icon_user.eb8ff65a.svg"
                         width="16"
                         height="16"
                       />
@@ -45,7 +45,7 @@
                   <template #prefix>
                     <div class="input-prefix-icon">
                       <img
-                        src="https://testqlthapp.misacdn.net/r/ontap/img/icon_phone.a18b4824.svg"
+                        src="../../assets/icon_phone.a18b4824.svg"
                         width="16"
                         height="16"
                       />
@@ -65,7 +65,7 @@
                   <template #prefix>
                     <div class="input-prefix-icon">
                       <img
-                        src="https://testqlthapp.misacdn.net/r/ontap/img/icon_email.0ef2751c.svg"
+                        src="../../assets/icon_email.0ef2751c.svg"
                         width="20"
                         height="16"
                       />
@@ -86,7 +86,7 @@
                   <template #prefix>
                     <div class="input-prefix-icon">
                       <img
-                        src="https://testqlthapp.misacdn.net/r/ontap/img/icon_key.1533a911.svg"
+                        src="../../assets/icon_key.1533a911.svg"
                         width="16"
                         height="16"
                       />

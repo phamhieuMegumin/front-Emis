@@ -16,6 +16,7 @@ const store = createStore({
     subjectList: [],
     classroomInfo: null,
     loading: false,
+    imageClassroom: null,
   },
   mutations: {
     CHANGE_AUTHENTICATION(state, data) {
@@ -42,6 +43,9 @@ const store = createStore({
     },
     CHANGE_LOADING(state) {
       state.loading = !state.loading;
+    },
+    CHANGE_IMAGE(state, data) {
+      state.imageClassroom = data;
     },
   },
   actions: {},

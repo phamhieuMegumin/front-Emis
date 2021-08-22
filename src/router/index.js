@@ -2,10 +2,9 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/pages/Home.vue";
 import Login from "../views/pages/Login.vue";
 import Register from "../views/pages/Register.vue";
-// import store from "../stores/stores";
-// import AuthContext from "../uses/Auth";
 import Teacher from "../views/teacher/Teacher.vue";
 import Classroom from "../views/teacher/Classroom.vue";
+import Test from "../views/pages/Test.vue";
 const routes = [
   {
     path: "/",
@@ -22,6 +21,13 @@ const routes = [
   {
     path: "/register",
     component: Register,
+    meta: {
+      isAuthetication: false,
+    },
+  },
+  {
+    path: "/test",
+    component: Test,
     meta: {
       isAuthetication: false,
     },

@@ -1,13 +1,10 @@
 <template>
   <div>
     <div class="login-container">
-      <div class="form-group">
+      <div class="form-group" v-loading="store.state.loading">
         <div class="logo">
-          <img
-            class="logo-image"
-            src="https://testqlthapp.misacdn.net/r/ontap/img/logo_login.084a83c4.svg"
-          />
-          <div class="logo-title">Ôn tập</div>
+          <img class="logo-image" src="../../assets/logo_login.084a83c4.svg" />
+          <div class="logo-title">EMIS Ôn tập</div>
         </div>
         <div class="container">
           <!-- Bắt đầu tab menu -->
@@ -15,7 +12,7 @@
             <div class="is-active tab">
               <img
                 class="tab-icon"
-                src="https://testqlthapp.misacdn.net/r/ontap/img/icon_teacher_active.0cfd3855.svg"
+                src="../../assets/icon_teacher_active.0cfd3855.svg"
                 width="24"
                 height="24"
               /><span class="text">Giáo viên</span>
@@ -23,7 +20,7 @@
             <div class="tab">
               <img
                 class="tab-icon"
-                src="https://testqlthapp.misacdn.net/r/ontap/img/icon_student.c4ef172f.svg"
+                src="../../assets/icon_student.c4ef172f.svg"
                 width="24"
                 height="24"
               /><span class="text">Học sinh</span>
@@ -43,7 +40,7 @@
                     <template #prefix>
                       <div class="input-prefix-icon">
                         <img
-                          src="https://testqlthapp.misacdn.net/r/ontap/img/icon_user.eb8ff65a.svg"
+                          src="../../assets/icon_user.eb8ff65a.svg"
                           width="16"
                           height="16"
                         />
@@ -62,7 +59,7 @@
                     <template #prefix>
                       <div class="input-prefix-icon">
                         <img
-                          src="https://testqlthapp.misacdn.net/r/ontap/img/icon_key.1533a911.svg"
+                          src="../../assets/icon_key.1533a911.svg"
                           width="16"
                           height="16"
                         />
@@ -108,7 +105,7 @@
 <script>
 import { reactive } from "vue";
 import { onBeforeRouteUpdate } from "vue-router";
-// import { useStore } from "vuex";
+import { useStore } from "vuex";
 // import Notification from "../../uses/Notification";
 import AuthManager from "../../uses/Auth";
 export default {
@@ -118,7 +115,7 @@ export default {
     });
     // const { ErrorNotify } = Notification();
     const { handleLogin } = AuthManager();
-    // const store = useStore();
+    const store = useStore();
     // const router = useRouter();
     // Quy chuẩn kiểm tra form
     const rules = reactive({
@@ -157,6 +154,7 @@ export default {
       account,
       handleSubmit,
       rules,
+      store,
     };
   },
 };
