@@ -39,7 +39,7 @@ const routes = [
       classRoom: Classroom,
     },
     meta: {
-      isAuthetication: false,
+      isAuthetication: true,
     },
   },
 ];

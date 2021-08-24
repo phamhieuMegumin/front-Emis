@@ -24,15 +24,18 @@ export default function() {
    */
   const handleLogin = async (account) => {
     try {
+      store.commit("CHANGE_LOADING");
       const data = await axios({
         method: "post",
         url: "accounts/login",
         data: account,
       });
+      store.commit("CHANGE_LOADING");
       localStorage.setItem("JWT", data.data.token);
       store.commit("CHANGE_AUTHENTICATION", data.data.accountInfo);
       router.push("/teacher/classroom");
     } catch (error) {
+      store.commit("CHANGE_LOADING");
       console.log(error);
     }
   };
@@ -43,14 +46,17 @@ export default function() {
    */
   const handleRegister = async (account) => {
     try {
+      store.commit("CHANGE_LOADING");
       await axios({
         method: "post",
         url: "accounts/register",
         data: account,
       });
+      store.commit("CHANGE_LOADING");
       successNotify("Tài khoản đã đăng ký thành công");
       router.push("/login");
     } catch (error) {
+      store.commit("CHANGE_LOADING");
       console.log(error);
     }
   };

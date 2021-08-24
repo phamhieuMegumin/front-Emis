@@ -3,7 +3,9 @@
     <div class="class-item-content">
       <!-- ảnh thumbnail -->
       <div class="thumbnail">
-        <div class="thumbnail-wrapper"></div>
+        <div class="thumbnail-wrapper">
+          <img :src="testUrl" v-if="isShowImage" />
+        </div>
       </div>
       <!-- Kết thúc ảnh thumbnail -->
       <!-- Bắt đầu phần thông tin card -->
@@ -41,7 +43,7 @@
               @click="
                 handleDeleteClassroom(
                   classInfo.classroomId,
-                  classInfo.classroomCode
+                  classInfo.classroomName
                 )
               "
               class="option-item"
@@ -71,10 +73,22 @@
 import classroomContext from "../uses/Classroom";
 import { ElMessageBox } from "element-plus";
 import NotificationContext from "../uses/Notification";
+import { watchEffect, ref } from "vue";
 //#endregion
 export default {
   props: ["classInfo"],
   setup(props, context) {
+    const testUrl = ref(null);
+    const isShowImage = ref(false);
+    watchEffect(() => {
+      console.log("run");
+      testUrl.value =
+        "https://localhost:44359/api/v1/FileUploads/" +
+        props.classInfo.classroomId;
+      setTimeout(() => {
+        isShowImage.value = true;
+      }, 200);
+    });
     //#region Khai báo
     const { deleteClassroom, getListClassroom } = classroomContext();
     const { successNotify } = NotificationContext();
@@ -95,19 +109,16 @@ export default {
      * @param="classroomId" : ID của lớp học cần xóa
      * CreatedBy : PQHieu(17/08/2021)
      */
-    const handleDeleteClassroom = async (classroomId, classroomCode) => {
-      ElMessageBox.confirm(
-        `Bạn có muốn xóa lớp học có mã ${classroomCode} không?`,
-        {
-          title: "EMIS Ôn tập",
-          showClose: false,
-          dangerouslyUseHTMLString: true,
-          confirmButtonText: "Xóa",
-          cancelButtonText: "Hủy",
-          closeOnClickModal: false,
-          confirmButtonClass: "btn--gradient btn-group-left",
-        }
-      )
+    const handleDeleteClassroom = async (classroomId, classroomName) => {
+      ElMessageBox.confirm(`Bạn có muốn xóa lớp học ${classroomName} không?`, {
+        title: "EMIS Ôn tập",
+        showClose: false,
+        dangerouslyUseHTMLString: true,
+        confirmButtonText: "Xóa",
+        cancelButtonText: "Hủy",
+        closeOnClickModal: false,
+        confirmButtonClass: "btn--gradient btn-group-left",
+      })
         .then(async () => {
           try {
             // Xóa lớp học
@@ -128,6 +139,8 @@ export default {
     return {
       handleChangeinfo,
       handleDeleteClassroom,
+      testUrl,
+      isShowImage,
     };
   },
 };
@@ -156,11 +169,12 @@ export default {
 }
 .thumbnail-wrapper {
   height: 150px;
-  background: url("../assets/toan.10218e68.png");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
   cursor: pointer;
+}
+.thumbnail-wrapper > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .thumbnail {
   display: block;

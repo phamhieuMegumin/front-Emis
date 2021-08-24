@@ -66,12 +66,15 @@ export default function() {
 
   const getClassroomById = async (classroomId) => {
     try {
+      store.commit("CHANGE_LOADING");
       const data = await axios({
         method: "get",
         url: `/classrooms/${classroomId}`,
       });
+      store.commit("CHANGE_LOADING");
       store.commit("CHANGE_CLASSROOM_INFO", data.data);
     } catch (error) {
+      store.commit("CHANGE_LOADING");
       console.log(error);
     }
   };

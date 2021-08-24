@@ -1,9 +1,5 @@
 <template>
-  <div
-    class="classroom-container"
-    ref="rootClassroom"
-    v-loading="store.state.loading"
-  >
+  <div class="classroom-container">
     <!-- Bắt đầu header -->
     <div class="header">
       <div class="title">Danh sách lớp đang quản lý</div>
@@ -41,21 +37,31 @@
       :rules="rules"
       ref="ruleForm"
       class="dialog-form"
+      v-loading="store.state.loading"
     >
       <div class="container">
         <div class="dialog-content">
           <div class="content-left">
             <label class="image-container" for="imgSelect">
-              <!-- <img
-                src="https://localhost:44359/api/v1/FileUploads?fileName=testFile_uplaod"
-              /> -->
               <input
                 class="imgSelect"
                 type="file"
                 @change="seletedFile"
                 id="imgSelect"
               />
-              <button @click="upLoad">Test</button>
+              <img
+                :src="imagePreview"
+                class="image-preview"
+                v-if="imagePreview"
+              />
+              <img
+                :src="
+                  'https://localhost:44359/api/v1/FileUploads/' +
+                    updateClassroomId
+                "
+                v-if="updateClassroomId"
+                class="image-preview"
+              />
               <!-- test end -->
             </label>
             <label for="imgSelect" class="change">Thay ảnh đại diện</label>
@@ -157,14 +163,7 @@
 <script>
 import CardItem from "@/components/CardItem.vue";
 import { ElMessageBox } from "element-plus";
-import {
-  computed,
-  defineComponent,
-  reactive,
-  ref,
-  watch,
-  watchEffect,
-} from "vue";
+import { computed, defineComponent, reactive, ref, watch } from "vue";
 import { useStore } from "vuex";
 import classroomContext from "../../uses/Classroom";
 import NotificationContext from "../../uses/Notification";
@@ -185,7 +184,9 @@ export default defineComponent({
       updateClassroom,
       updateManageSubject,
     } = classroomContext();
-    const { uploadimage } = ImageContext();
+
+    // Lấy các hàm API từ ImageContext
+    const { uploadimage, updateImage } = ImageContext();
 
     // Khai báo store
     const store = useStore();
@@ -209,7 +210,7 @@ export default defineComponent({
     // Chế độ thêm mới hoặc cập nhật
     var updateMode = false;
     // ID lớp học cần sửa;
-    var updateClassroomId = null;
+    const updateClassroomId = ref(null);
 
     // file hình ảnh lớp học
     const imageFile = ref("");
@@ -331,15 +332,17 @@ export default defineComponent({
       }
     );
     //#endregion
-
+    const imagePreview = ref(null);
     //#region Methods
     const seletedFile = async (event) => {
       imageFile.value = event.target.files[0];
+      var reader = new FileReader();
+      reader.onload = (e) => {
+        imagePreview.value = e.target.result;
+      };
+      reader.readAsDataURL(event.target.files[0]);
     };
 
-    const upLoad = () => {
-      uploadimage(imageFile.value);
-    };
     /**
      *  Tự động tạo tên lớp dựa tên khối lớp và tên lớp
      * CreatedBy: PQHieu(14/07/2021)
@@ -374,10 +377,12 @@ export default defineComponent({
      * CreatedBy : PQHieu(13/07/2021)
      */
     const changeInfo = async (classroomId) => {
+      // Hiển thị dialog chỉnh sửa
+      dialogVisible.value = true;
       // Đổi sang chế độ cập nhật
       updateMode = true;
       // Cập nhật ID lớp học cần sửa
-      updateClassroomId = classroomId;
+      updateClassroomId.value = classroomId;
       // Thay đổi title dialog
       titleDialog.value = "Cập nhật lớp học";
       // Lấy thông tin lớp học
@@ -392,23 +397,12 @@ export default defineComponent({
       };
       // Cập nhật lại thông tin lớp học để hiển thị
       Object.assign(classInfo, configClassInfo);
-      // Hiển thị dialog chỉnh sửa
-      dialogVisible.value = true;
     };
 
     /**
      * Thực hiện xác nhận khi đóng dialog
      * CreatedBy : PQHieu(13/07/2021)
      */
-    const rootClassroom = ref(null);
-    watchEffect(
-      () => {
-        console.log(rootClassroom.value); // => <div>This is a root element</div>
-      },
-      {
-        flush: "post",
-      }
-    );
     const handleClose = (done) => {
       // Chỉ thực hiện mở form xác nhận khi isConfirmDialog = true
       if (isConfirmDialog.value) {
@@ -428,15 +422,6 @@ export default defineComponent({
           .catch(() => {
             done();
           });
-
-        // Test
-        // ElMessageBox.confirm(null, {
-        //   showClose: false,
-        //   showConfirmButton: false,
-        //   cancelButtonText: "Không lưu",
-        //   closeOnClickModal: false,
-        //   customClass: "testMessageBox",
-        // });
       } else {
         done();
       }
@@ -459,9 +444,11 @@ export default defineComponent({
       // Đóng chế độ cập nhật
       updateMode = false;
       // Hủy bỏ ID lớp học
-      updateClassroomId = null;
+      updateClassroomId.value = null;
       // Thay đổi title Dialog
       titleDialog.value = "Tạo lớp mới";
+      // reset laị hình ảnh lớp học
+      imagePreview.value = null;
     };
 
     /**
@@ -473,12 +460,17 @@ export default defineComponent({
           // thực hiện khi check thành công
           try {
             const newClassroom = { ...classInfo, subject: null };
+            store.commit("CHANGE_LOADING");
             if (!updateMode) {
               // Thêm mới lớp học
               await insertNewClassroom(newClassroom);
+              // Thêm ảnh lớp học
+              await uploadimage(imageFile.value);
             } else {
               // Cập nhật lớp học
-              await updateClassroom(updateClassroomId, newClassroom);
+              await updateClassroom(updateClassroomId.value, newClassroom);
+              // Cập nhật ảnh lớp học
+              await updateImage(updateClassroomId.value, imageFile.value);
             }
             // Config danh sách quản lý môn học
             var newListSubject = classInfo.subject.map((item) => {
@@ -491,8 +483,12 @@ export default defineComponent({
               await insertNewManageSubject(newListSubject);
             } else {
               // Cập nhật quản lý lớp học
-              await updateManageSubject(updateClassroomId, newListSubject);
+              await updateManageSubject(
+                updateClassroomId.value,
+                newListSubject
+              );
             }
+            store.commit("CHANGE_LOADING");
             dialogVisible.value = false; // thực hiện đóng form
             // Thông báo thành công cho người dùng
             if (!updateMode) successNotify("Lớp học đã được tạo");
@@ -500,6 +496,7 @@ export default defineComponent({
             // Load lại dữ liệu danh sách lớp học
             await getListClassroom();
           } catch (error) {
+            store.commit("CHANGE_LOADING");
             console.log(error);
           }
         }
@@ -520,9 +517,9 @@ export default defineComponent({
       handleSave,
       store,
       titleDialog,
-      rootClassroom,
       seletedFile,
-      upLoad,
+      imagePreview,
+      updateClassroomId,
     };
   },
 });
@@ -586,6 +583,11 @@ export default defineComponent({
 }
 .imgSelect {
   display: none;
+}
+.image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .container {
   margin-top: 0;
