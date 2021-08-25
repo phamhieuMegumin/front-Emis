@@ -3,8 +3,8 @@
     <div class="class-item-content">
       <!-- ảnh thumbnail -->
       <div class="thumbnail">
-        <div class="thumbnail-wrapper">
-          <img :src="testUrl" v-if="isShowImage" />
+        <div class="thumbnail-wrapper" ref="changeImg">
+          <img :src="testUrl" />
         </div>
       </div>
       <!-- Kết thúc ảnh thumbnail -->
@@ -73,22 +73,26 @@
 import classroomContext from "../uses/Classroom";
 import { ElMessageBox } from "element-plus";
 import NotificationContext from "../uses/Notification";
-import { watchEffect, ref } from "vue";
+import { ref, onMounted, onUpdated } from "vue";
 //#endregion
 export default {
   props: ["classInfo"],
   setup(props, context) {
     const testUrl = ref(null);
-    const isShowImage = ref(false);
-    watchEffect(() => {
-      console.log("run");
-      testUrl.value =
+    const changeImg = ref(null);
+    onMounted(() => {
+      changeImg.value.querySelector("img").src =
         "https://localhost:44359/api/v1/FileUploads/" +
         props.classInfo.classroomId;
+    });
+    onUpdated(() => {
       setTimeout(() => {
-        isShowImage.value = true;
+        changeImg.value.querySelector("img").src =
+          "https://localhost:44359/api/v1/FileUploads/" +
+          props.classInfo.classroomId;
       }, 200);
     });
+
     //#region Khai báo
     const { deleteClassroom, getListClassroom } = classroomContext();
     const { successNotify } = NotificationContext();
@@ -140,7 +144,7 @@ export default {
       handleChangeinfo,
       handleDeleteClassroom,
       testUrl,
-      isShowImage,
+      changeImg,
     };
   },
 };

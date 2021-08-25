@@ -14,12 +14,8 @@ export default {
   name: "App",
   setup() {
     const { checkAuthenticaiton } = AuthContext();
-    checkAuthenticaiton();
+    if (localStorage.getItem("JWT")) checkAuthenticaiton();
   },
-  // beforeCreate() {
-  //   const { checkAuthenticaiton } = AuthContext();
-  //   checkAuthenticaiton();
-  // },
 };
 </script>
 

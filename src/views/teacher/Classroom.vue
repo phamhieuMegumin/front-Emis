@@ -213,7 +213,7 @@ export default defineComponent({
     const updateClassroomId = ref(null);
 
     // file hình ảnh lớp học
-    const imageFile = ref("");
+    const imageFile = ref(null);
 
     const ruleForm = ref(null);
     /**
@@ -415,8 +415,8 @@ export default defineComponent({
           closeOnClickModal: false,
           confirmButtonClass: "btn--gradient btn-group-left",
         })
-          .then(async () => {
-            await handleSave();
+          .then(() => {
+            handleSave();
             done();
           })
           .catch(() => {
@@ -449,6 +449,8 @@ export default defineComponent({
       titleDialog.value = "Tạo lớp mới";
       // reset laị hình ảnh lớp học
       imagePreview.value = null;
+      // reset hình ảnh được chọn
+      imageFile.value = null;
     };
 
     /**
@@ -470,7 +472,8 @@ export default defineComponent({
               // Cập nhật lớp học
               await updateClassroom(updateClassroomId.value, newClassroom);
               // Cập nhật ảnh lớp học
-              await updateImage(updateClassroomId.value, imageFile.value);
+              if (imageFile.value)
+                await updateImage(updateClassroomId.value, imageFile.value);
             }
             // Config danh sách quản lý môn học
             var newListSubject = classInfo.subject.map((item) => {
@@ -489,10 +492,11 @@ export default defineComponent({
               );
             }
             store.commit("CHANGE_LOADING");
-            dialogVisible.value = false; // thực hiện đóng form
+
             // Thông báo thành công cho người dùng
             if (!updateMode) successNotify("Lớp học đã được tạo");
             else successNotify("Lớp học đã được cập nhật");
+            dialogVisible.value = false; // thực hiện đóng form
             // Load lại dữ liệu danh sách lớp học
             await getListClassroom();
           } catch (error) {
